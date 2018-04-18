@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <stdarg.h>
 
 
 
@@ -19,8 +20,7 @@ class StackElement{
 StackElement :: ~StackElement(){}
 StackElement :: StackElement(const double v){
 		value = v;
-		printf("%f\n",value);
-		next = NULL;
+ 		next = NULL;
 }
 
 int StackElement :: IsValidElement(){
@@ -35,8 +35,7 @@ class Stack{
 		Stack();
 		Stack(const Stack* s);
 		Stack(double* array,int size);
-		template<typename... Args>
-		Stack( Args ... args);
+		Stack(int n_args, ...);
 		~Stack();
 		int Push(double element);
 		double Pop();
@@ -63,7 +62,6 @@ int Stack :: PushFromBottom(const double v){
 		printf("Stack :: PushFromBottom FAILED\n");
 		return 0;
 	}
-	printf("v == %f\n",v);
 	if(this->top){
 		StackElement* cur = top;
 		while(cur->next != NULL){
@@ -72,12 +70,10 @@ int Stack :: PushFromBottom(const double v){
 		StackElement* element = new StackElement(v);
 		element->value = v;
 		cur->next = element;
-		printf("top->value if = %f\n",top->value);
 		return 1;
 	}
 	else{
 		this->Push(v);
-		printf("top->value else = %f\n",top->value);
 		return 1;
 	}
 	
@@ -95,37 +91,35 @@ Stack :: ~Stack(){
 			StackElement** del = &cur;
 			
 			for(;cur != NULL;){
-				printf("cur->value del\n");
 				delete *del;
 				del = &cur;
 				cur=cur->next;
-				printf("cur->value del2\n");
 				if(cur->next != NULL)	
 					cur = cur->next;
 				else
 					break;
-				printf("cur->value del2.5\n");
 			}
-			printf("cur->value del3\n");
 		delete top;
 	}
 }
-template<typename... Args>
-Stack :: Stack( Args ... args){
-	this->Push(ExtractValue(args...));
+Stack :: Stack(int n_args,...){
+	va_list args;
+    int i;
+
+    va_start(args, n_args);
+    for(i = 0; i < n_args; i++)
+        this->Push(va_arg(args, double));
+    va_end(args);
+
 	
 }
 
 Stack :: Stack(const Stack* s){
 	this->top = NULL;
 	StackElement* cur = s->top;
-	printf("lmao1\n");
 	for (;cur != NULL; cur = cur->next){
-		printf("lmao2 %f\n",cur->value);
 		this->PushFromBottom(cur->value);
-		printf("lmao3\n");
 	}
-	printf("lmao4\n");
 }
 
 int Stack :: IsValidStack(){
@@ -224,12 +218,11 @@ int main(){
 	test_stack_ptr->Div();
 
 	Stack* test_stack_ptr2 = new Stack(test_stack_ptr);
-	Stack* test_stack_ptr3 = new Stack(1.0,2.0,3.0);
-
-	double res = test_stack_ptr2->Pop();
-	printf("res =%f \n",res);
+	Stack* test_stack_ptr3 = new Stack(3,1.0,2.0,3.0);
+	
+	double res = test_stack_ptr3->Pop();
+	printf("res = %f\n",res);
 	delete test_stack_ptr;
-	printf("mmmmm\n");
 	delete test_stack_ptr2;
 	return 0;
 }
