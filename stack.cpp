@@ -85,30 +85,21 @@ Stack :: Stack(){
 }
 
 Stack :: ~Stack(){
-	if(top){
-		
-		StackElement* cur = top->next;
-			StackElement** del = &cur;
-			
-			for(;cur != NULL;){
-				delete *del;
-				del = &cur;
-				cur=cur->next;
-				if(cur->next != NULL)	
-					cur = cur->next;
-				else
-					break;
-			}
-		delete top;
+	
+	for(StackElement* cur = top;cur != NULL; cur = cur->next){
+		delete cur;
+		printf("lol\n");
 	}
+	
 }
 Stack :: Stack(int n_args,...){
 	va_list args;
     int i;
 
     va_start(args, n_args);
-    for(i = 0; i < n_args; i++)
+    for(i = 0; i < n_args; i++){
         this->Push(va_arg(args, double));
+	}
     va_end(args);
 
 	
@@ -131,8 +122,8 @@ double Stack :: Pop(){
 	assert(this->top);
 	
 	double res = top->value;
-	StackElement* elem_to_delete = top;
-	top = top->next;
+	StackElement* elem_to_delete = this->top;
+	this->top = top->next;
 	delete elem_to_delete;
 	return res;
 }
@@ -207,22 +198,20 @@ int Stack :: Push (double value) {
 
 
 int main(){
-	Stack* test_stack_ptr = new Stack;
-
-	test_stack_ptr->Push(2);
-	test_stack_ptr->Push(4);
-	test_stack_ptr->PushFromBottom(3);
-	test_stack_ptr->PushFromBottom(10);
-	test_stack_ptr->Div();
-	test_stack_ptr->Div();
-	test_stack_ptr->Div();
-
-	Stack* test_stack_ptr2 = new Stack(test_stack_ptr);
-	Stack* test_stack_ptr3 = new Stack(3,1.0,2.0,3.0);
+	
+	Stack* test_stack_ptr3 = new Stack(3,1.0,2.0,4.0);
+	Stack* test_stack_ptr1 = new Stack();
+	test_stack_ptr1->Push(3);
+	test_stack_ptr1->Push(3);
+	test_stack_ptr1->Push(3);
 	
 	double res = test_stack_ptr3->Pop();
+	res = test_stack_ptr1->Pop();
+
+
 	printf("res = %f\n",res);
-	delete test_stack_ptr;
-	delete test_stack_ptr2;
+
+	delete test_stack_ptr1;
+	delete test_stack_ptr3;
 	return 0;
 }
