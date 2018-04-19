@@ -212,6 +212,5 @@ int main(){
 	printf("res = %f\n",res);
 
 	delete test_stack_ptr1;
-	//delete test_stack_ptr3;
 	return 0;
 }
